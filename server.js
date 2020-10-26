@@ -1,22 +1,45 @@
 const express = require("express");
 const { ApolloServer, gql } = require("apollo-server-express");
-
-const requestUrl =
-    "https://api.helbiz.com/admin/reporting/arlington/gbfs/free_bike_status.json";
+const VehicleAPI = require("./datasources/vehicle");
 
 const typeDefs = gql`
     type Query {
-        hello: String
+        bikes: [VehicleStatus]
+        bike(id: ID!): VehicleStatus
+    }
+
+    type VehicleStatus {
+        bike_id: String!
+        lat: Float!
+        lon: Float!
+        is_reserved: Boolean!
+        is_disabled: Boolean!
+        vehicle_type: String!
     }
 `;
 
+/*
+ * I added two resolvers that use the Helbiz API depending on the GraphQL Query.
+ */
 const resolvers = {
     Query: {
-        hello: () => "Hello world!",
+        bikes: (_, __, { dataSources }) =>
+            dataSources.vehicleAPI.getAllVehicles(),
+        bike: (_, { id }, { dataSources }) =>
+            dataSources.vehicleAPI.getVehicleById({ vehicleId: id }),
     },
 };
 
-const server = new ApolloServer({ typeDefs, resolvers });
+/*
+ * Initializes apollo server with types, resolvers, and the Helbiz API data source.
+ */
+const server = new ApolloServer({
+    typeDefs,
+    resolvers,
+    dataSources: () => ({
+        vehicleAPI: new VehicleAPI(),
+    }),
+});
 
 const app = express();
 server.applyMiddleware({ app });
