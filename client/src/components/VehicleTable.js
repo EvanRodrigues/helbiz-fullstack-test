@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from "react";
-import { useLazyQuery, gql } from "@apollo/client";
+import React from "react";
+import { useQuery, gql } from "@apollo/client";
 import Table from "@material-ui/core/Table";
 import TableBody from "@material-ui/core/TableBody";
 import TableCell from "@material-ui/core/TableCell";
@@ -10,10 +10,11 @@ import Paper from "@material-ui/core/Paper";
 import { VehicleInput } from "./VehicleInput";
 
 export const VehicleTable = () => {
-    const [vehicleInput, setVehicleInput] = useState("");
-
-    const handleSubmit = () => {
-        refetch({ id: vehicleInput });
+    /*
+     * Refetch the query using the given id from the input field.
+     */
+    const handleSubmit = (id) => {
+        refetch({ id });
     };
 
     /*
@@ -33,18 +34,11 @@ export const VehicleTable = () => {
     `;
 
     /*
-     * Using a LazyQuery to avoid multiple queries on input change.
+     * Initial query to fill the table with all vehicles.
      */
-    const [getVehicles, { loading, data, refetch }] = useLazyQuery(VEHICLES);
-
-    /*
-     * Initializes the table with information of every vehicle.
-     */
-    useEffect(() => {
-        getVehicles({
-            variables: { id: vehicleInput },
-        });
-    }, []);
+    const { loading, data, refetch } = useQuery(VEHICLES, {
+        variables: { id: "" },
+    });
 
     if (loading || !data) return <></>;
 
@@ -54,10 +48,7 @@ export const VehicleTable = () => {
     if (!data.vehicles[0]) {
         return (
             <div className="formContainer">
-                <VehicleInput
-                    setter={setVehicleInput}
-                    handleSubmit={handleSubmit}
-                />
+                <VehicleInput handleSubmit={handleSubmit} />
 
                 <span className="errorMessage">Could not find vehicle!</span>
 
@@ -96,10 +87,7 @@ export const VehicleTable = () => {
 
     return (
         <div className="formContainer">
-            <VehicleInput
-                setter={setVehicleInput}
-                handleSubmit={handleSubmit}
-            />
+            <VehicleInput handleSubmit={handleSubmit} />
 
             <div className="tableContainer">
                 <TableContainer component={Paper}>
