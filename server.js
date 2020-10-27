@@ -4,8 +4,7 @@ const VehicleAPI = require("./datasources/vehicle");
 
 const typeDefs = gql`
     type Query {
-        bikes: [VehicleStatus]
-        bike(id: ID!): VehicleStatus
+        vehicles(id: ID!): [VehicleStatus]
     }
 
     type VehicleStatus {
@@ -19,14 +18,13 @@ const typeDefs = gql`
 `;
 
 /*
- * I added two resolvers that use the Helbiz API depending on the GraphQL Query.
+ * I originally added two resolvers that use the Helbiz API depending on the GraphQL Query.
+ * I ran into trouble, so I combined the functionality of both resolves and queries into one.
  */
 const resolvers = {
     Query: {
-        bikes: (_, __, { dataSources }) =>
-            dataSources.vehicleAPI.getAllVehicles(),
-        bike: (_, { id }, { dataSources }) =>
-            dataSources.vehicleAPI.getVehicleById({ vehicleId: id }),
+        vehicles: (_, { id }, { dataSources }) =>
+            dataSources.vehicleAPI.getVehicles({ vehicleId: id }),
     },
 };
 

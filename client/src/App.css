@@ -2,3 +2,44 @@
     margin: 0;
     padding: 0;
 }
+
+body {
+    background-color: #c5c9c6;
+}
+
+.homePage,
+.content {
+    width: 100%;
+}
+
+.pageHeader {
+    text-align: center;
+}
+
+.content {
+    margin-top: 25px;
+}
+
+.formContainer {
+    margin: auto;
+    width: 80%;
+}
+
+.tableContainer {
+    margin-top: 5px;
+    max-height: 750px;
+    overflow: auto;
+}
+
+.inputContainer {
+    display: inline-block;
+    margin-right: 5px;
+}
+
+.errorMessage {
+    color: red;
+}
+
+thead > tr > th {
+    font-weight: bold !important;
+}

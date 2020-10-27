@@ -28,26 +28,33 @@ class VehicleAPI extends RESTDataSource {
      * Gets all vehicles from the Helbiz API.
      * Returns an array of vehicles.
      */
-    async getAllVehicles() {
-        const response = await this.get("");
-
+    getAllVehicles(response) {
         return Array.isArray(response.data.bikes)
             ? response.data.bikes.map((vehicle) => this.vehicleReducer(vehicle))
             : [];
     }
 
+    getVehicleById(response, vehicleId) {
+        return new Array(
+            this.vehicleReducer(
+                response.data.bikes.filter(
+                    (vehicle) => vehicleId == vehicle.bike_id
+                )[0]
+            )
+        );
+    }
+
     /*
-     * Gets all vehicles from the Helbiz API and then filters the response to match the correct vehicleId.
+     * Gets all vehicles from the Helbiz API and then filters the response to match the correct vehicleId if necessary.
+     * Calls getAllVehicles if the vehicleId is an empty String.
      * Returns null if no vehicle is found with the given ID.
      */
-    async getVehicleById({ vehicleId }) {
+    async getVehicles({ vehicleId }) {
         const response = await this.get("");
 
-        return this.vehicleReducer(
-            response.data.bikes.filter(
-                (vehicle) => vehicleId == vehicle.bike_id
-            )[0]
-        );
+        return vehicleId == ""
+            ? this.getAllVehicles(response)
+            : this.getVehicleById(response, vehicleId);
     }
 }
 
