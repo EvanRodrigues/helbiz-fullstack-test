@@ -34,6 +34,9 @@ class VehicleAPI extends RESTDataSource {
             : [];
     }
 
+    /*
+     * Returns an array containing the vehicle that matches the vehicleId
+     */
     getVehicleById(response, vehicleId) {
         return new Array(
             this.vehicleReducer(
